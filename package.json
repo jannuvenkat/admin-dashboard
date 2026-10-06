@@ -1,0 +1,22 @@
+{
+  "name": "admin-analytics-dashboard",
+  "version": "1.0.0",
+  "description": "Production-quality Admin Analytics Dashboard Full-Stack Application",
+  "scripts": {
+    "dev:backend": "npm --prefix backend run dev",
+    "dev:frontend": "npm --prefix frontend run dev",
+    "start:backend": "npm --prefix backend start",
+    "build:frontend": "npm --prefix frontend run build",
+    "seed": "npm --prefix backend run seed"
+  },
+  "keywords": [
+    "admin-dashboard",
+    "react",
+    "nodejs",
+    "mysql",
+    "express",
+    "analytics"
+  ],
+  "author": "",
+  "license": "ISC"
+}
