@@ -1,4 +1,6 @@
 import asyncio
+import os
+import ssl
 from datetime import datetime, date
 from decimal import Decimal
 import aiomysql
@@ -9,18 +11,29 @@ pool: aiomysql.Pool | None = None
 async def init_db_pool():
     global pool
     if pool is None:
+        ssl_ctx = None
+        if settings.DB_SSL:
+            ssl_ctx = ssl.create_default_context()
+            if settings.DB_SSL_CA and os.path.exists(settings.DB_SSL_CA):
+                ssl_ctx.load_verify_locations(settings.DB_SSL_CA)
+                ssl_ctx.verify_mode = ssl.CERT_REQUIRED
+            else:
+                ssl_ctx.check_hostname = False
+                ssl_ctx.verify_mode = ssl.CERT_NONE
+
         pool = await aiomysql.create_pool(
             host=settings.DB_HOST,
-            port=3306,
+            port=settings.DB_PORT,
             user=settings.DB_USER,
             password=settings.DB_PASSWORD,
             db=settings.DB_NAME,
             minsize=1,
             maxsize=10,
             autocommit=True,
-            charset="utf8mb4"
+            charset="utf8mb4",
+            ssl=ssl_ctx
         )
-        print(f"[Database] Connected successfully to MySQL database: {settings.DB_NAME}")
+        print(f"[Database] Connected successfully to MySQL database: {settings.DB_NAME} at {settings.DB_HOST}:{settings.DB_PORT} (SSL: {'Enabled' if ssl_ctx else 'Disabled'})")
 
 async def close_db_pool():
     global pool
